@@ -1,0 +1,16 @@
+body {
+  font-family: sans-serif;
+  background-color: #f9f9f9;
+  padding: 20px;
+  max-width: 600px;
+  margin: auto;
+}
+.hidden {
+  display: none;
+}
+button {
+  display: block;
+  margin: 10px 0;
+  padding: 10px 15px;
+  font-size: 1rem;
+}
