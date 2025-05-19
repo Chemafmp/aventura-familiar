@@ -1,113 +1,26 @@
-document.addEventListener("DOMContentLoaded", function () {
-  let personaje = "";
-  let puntos = parseInt(localStorage.getItem("puntos")) || 0;
+<body>
+  <div id="pantalla-inicio">
+    <h1>🌟 Aventura Familiar 🌟</h1>
+    <p>¡Elige tu personaje para empezar la historia!</p>
+    <button onclick="elegirPersonaje('Marina')">Marina</button>
+    <button onclick="elegirPersonaje('Josema')">Josema</button>
+    <button onclick="elegirPersonaje('Elfos')">Elfos</button>
+  </div>
 
-  const historia = {
-    inicio: {
-      texto: "Despiertas en tu habitación y notas que algo no está bien... los elfos han desaparecido. ¿Qué haces?",
-      opciones: [
-        { texto: "Buscar en el armario", siguiente: "armario" },
-        { texto: "Ir al salón", siguiente: "salon" }
-      ]
-    },
-    armario: {
-      texto: "Abres el armario y encuentras una nota: 'Ven al mundo mágico'. ¿Vas?",
-      opciones: [
-        { texto: "¡Sí, vamos!", siguiente: "mundoMagico" },
-        { texto: "No, da miedo...", siguiente: "finMiedo" }
-      ]
-    },
-    salon: {
-      texto: "En el salón, solo hay silencio... hasta que algo se mueve detrás del sofá.",
-      opciones: [
-        { texto: "Investigar detrás del sofá", siguiente: "sofa" },
-        { texto: "Volver a la habitación", siguiente: "inicio" }
-      ]
-    },
-    mundoMagico: {
-      texto: "¡Has entrado en el mundo mágico! Aquí empieza tu gran aventura...",
-      opciones: []
-    },
-    finMiedo: {
-      texto: "Te escondes bajo las mantas. Tal vez otro día... Fin.",
-      opciones: []
-    },
-    sofa: {
-      texto: "¡Sorpresa! Los elfos te estaban esperando para jugar. ¡Comienza la aventura!",
-      opciones: []
-    }
-  };
+  <div id="pantalla-historia" class="hidden">
+    <h2 id="nombre-personaje"></h2>
+    <p id="texto-historia"></p>
+    <div id="opciones"></div>
 
-  const puntosEl = document.getElementById("contador-puntos");
-  const reiniciarBtn = document.getElementById("boton-reiniciar");
-  const listaLogros = document.getElementById("lista-logros");
+    <div id="contador-puntos">Puntos: 0</div>
 
-  function actualizarPuntosUI() {
-    puntosEl.textContent = `Puntos: ${puntos}`;
-  }
+    <button id="boton-reiniciar">🔄 Reiniciar Juego</button>
 
-  function agregarLogro(texto) {
-    const item = document.createElement("li");
-    item.textContent = texto;
-    listaLogros.appendChild(item);
-  }
+    <div id="seccion-logros">
+      <h3>🎖️ Logros</h3>
+      <ul id="lista-logros"></ul>
+    </div>
+  </div>
 
-  function elegirPersonaje(nombre) {
-    personaje = nombre;
-    localStorage.setItem("personaje", personaje);
-    localStorage.setItem("puntos", 0);
-    puntos = 0;
-    document.getElementById("pantalla-inicio").classList.add("hidden");
-    document.getElementById("pantalla-historia").classList.remove("hidden");
-    document.getElementById("nombre-personaje").textContent = `👤 Personaje: ${personaje}`;
-    actualizarPuntosUI();
-    mostrarEscena("inicio");
-  }
-
-  function mostrarEscena(escena) {
-    const nodo = historia[escena];
-    localStorage.setItem("escena", escena);
-    document.getElementById("texto-historia").textContent = nodo.texto;
-    const contenedorOpciones = document.getElementById("opciones");
-    contenedorOpciones.innerHTML = "";
-
-    nodo.opciones.forEach(op => {
-      const btn = document.createElement("button");
-      btn.textContent = op.texto;
-      btn.onclick = () => {
-        puntos += 10;
-        localStorage.setItem("puntos", puntos);
-        actualizarPuntosUI();
-        mostrarEscena(op.siguiente);
-      };
-      contenedorOpciones.appendChild(btn);
-    });
-
-    if (nodo.opciones.length === 0) {
-      puntos += 50;
-      localStorage.setItem("puntos", puntos);
-      actualizarPuntosUI();
-      agregarLogro("🏁 Aventura completada");
-    }
-  }
-
-  reiniciarBtn.addEventListener("click", () => {
-    localStorage.clear();
-    location.reload();
-  });
-
-  // Restaurar progreso si existe
-  const personajeGuardado = localStorage.getItem("personaje");
-  const escenaGuardada = localStorage.getItem("escena");
-  if (personajeGuardado && escenaGuardada) {
-    personaje = personajeGuardado;
-    document.getElementById("pantalla-inicio").classList.add("hidden");
-    document.getElementById("pantalla-historia").classList.remove("hidden");
-    document.getElementById("nombre-personaje").textContent = `👤 Personaje: ${personaje}`;
-    actualizarPuntosUI();
-    mostrarEscena(escenaGuardada);
-  }
-
-  // Hacer disponible globalmente
-  window.elegirPersonaje = elegirPersonaje;
-});
+  <script src="js/main.js"></script>
+</body>
