@@ -1,106 +1,45 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aventura Familiar</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background-color: #f9f9f9;
-      padding: 20px;
-      max-width: 600px;
-      margin: auto;
-    }
-    .hidden { display: none; }
-    button {
-      display: block;
-      margin: 10px 0;
-      padding: 10px 15px;
-      font-size: 1rem;
-    }
-  </style>
-</head>
-<body>
-  <div id="pantalla-inicio">
-    <h1>🌟 Aventura Familiar 🌟</h1>
-    <p>¡Elige tu personaje para empezar la historia!</p>
-    <button onclick="elegirPersonaje('Marina')">Marina</button>
-    <button onclick="elegirPersonaje('Josema')">Josema</button>
-    <button onclick="elegirPersonaje('Elfos')">Elfos</button>
-  </div>
+# 🌟 Aventura Familiar
 
-  <div id="pantalla-historia" class="hidden">
-    <h2 id="nombre-personaje"></h2>
-    <p id="texto-historia"></p>
-    <div id="opciones"></div>
-  </div>
+Una pequeña aventura interactiva hecha en HTML, CSS y JavaScript, diseñada para ser jugada por toda la familia desde cualquier navegador — ¡incluidos los móviles!
 
-  <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    let personaje = "";
+## 🚀 ¿De qué trata?
 
-    const historia = {
-      inicio: {
-        texto: "Despiertas en tu habitación y notas que algo no está bien... los elfos han desaparecido. ¿Qué haces?",
-        opciones: [
-          { texto: "Buscar en el armario", siguiente: "armario" },
-          { texto: "Ir al salón", siguiente: "salon" }
-        ]
-      },
-      armario: {
-        texto: "Abres el armario y encuentras una nota: 'Ven al mundo mágico'. ¿Vas?",
-        opciones: [
-          { texto: "¡Sí, vamos!", siguiente: "mundoMagico" },
-          { texto: "No, da miedo...", siguiente: "finMiedo" }
-        ]
-      },
-      salon: {
-        texto: "En el salón, solo hay silencio... hasta que algo se mueve detrás del sofá.",
-        opciones: [
-          { texto: "Investigar detrás del sofá", siguiente: "sofa" },
-          { texto: "Volver a la habitación", siguiente: "inicio" }
-        ]
-      },
-      mundoMagico: {
-        texto: "¡Has entrado en el mundo mágico! Aquí empieza tu gran aventura...",
-        opciones: []
-      },
-      finMiedo: {
-        texto: "Te escondes bajo las mantas. Tal vez otro día... Fin.",
-        opciones: []
-      },
-      sofa: {
-        texto: "¡Sorpresa! Los elfos te estaban esperando para jugar. ¡Comienza la aventura!",
-        opciones: []
-      }
-    };
+Marina, Josema y los elfos de Navidad han desaparecido misteriosamente. Cada jugador elige a su personaje y toma decisiones que afectan el rumbo de la historia. ¡Una experiencia mágica y divertida pensada para compartir en familia!
 
-    function elegirPersonaje(nombre) {
-      personaje = nombre;
-      document.getElementById("pantalla-inicio").classList.add("hidden");
-      document.getElementById("pantalla-historia").classList.remove("hidden");
-      document.getElementById("nombre-personaje").textContent = `👤 Personaje: ${personaje}`;
-      mostrarEscena("inicio");
-    }
+## 📂 Estructura del Proyecto
 
-    function mostrarEscena(escena) {
-      const nodo = historia[escena];
-      document.getElementById("texto-historia").textContent = nodo.texto;
-      const contenedorOpciones = document.getElementById("opciones");
-      contenedorOpciones.innerHTML = "";
-      nodo.opciones.forEach(op => {
-        const btn = document.createElement("button");
-        btn.textContent = op.texto;
-        btn.onclick = () => mostrarEscena(op.siguiente);
-        contenedorOpciones.appendChild(btn);
-      });
-    }
+```
+aventura-familiar/
+├── index.html             # Página principal
+├── css/
+│   └── styles.css         # Estilos
+├── js/
+│   └── main.js            # Lógica del juego
+└── assets/                # Carpeta para imágenes, sonidos y datos
+```
 
-    // Expone la función al contexto global
-    window.elegirPersonaje = elegirPersonaje;
-  });
-  </script>
-</body>
-</html>
-<!-- No additional code is needed at the placeholder. The current implementation is complete and functional. -->
+## 🧑‍💻 Cómo colaborar
+
+Este proyecto está pensado para aprender a programar en familia. Aquí van algunas ideas para colaborar:
+
+- Añadir nuevas escenas y decisiones en `main.js`
+- Dibujar personajes y subirlos a `assets/images`
+- Grabar efectos de sonido divertidos en `assets/sounds`
+- Cambiar estilos y colores en `styles.css`
+
+## 🌐 Cómo jugar
+
+1. Abre [https://chemafmp.github.io/aventura-familiar/](https://chemafmp.github.io/aventura-familiar/) en tu navegador.
+2. Elige tu personaje.
+3. ¡Empieza la aventura!
+
+## 💡 Ideas futuras
+
+- Guardado del progreso
+- Niveles por mundos mágicos
+- Modo fácil y explorador
+- Efectos sonoros y música de fondo
+
+---
+
+Hecho con ❤️ por Chema, Marina, Josema e Iria.
