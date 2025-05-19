@@ -1,16 +1,82 @@
-body {
-  font-family: sans-serif;
-  background-color: #f9f9f9;
-  padding: 20px;
-  max-width: 600px;
-  margin: auto;
+// Nuevo: Mostrar puntos
+const puntosEl = document.createElement("div");
+puntosEl.style.marginTop = "20px";
+document.body.appendChild(puntosEl);
+
+const reiniciarBtn = document.createElement("button");
+reiniciarBtn.textContent = "🔄 Reiniciar partida";
+reiniciarBtn.style.marginTop = "10px";
+reiniciarBtn.onclick = () => {
+  localStorage.clear();
+  location.reload();
+};
+document.body.appendChild(reiniciarBtn);
+
+const logrosEl = document.createElement("div");
+logrosEl.style.marginTop = "20px";
+logrosEl.innerHTML = "<h3>🎖️ Logros</h3><ul id='lista-logros'></ul>";
+document.body.appendChild(logrosEl);
+
+function agregarLogro(texto) {
+  const item = document.createElement("li");
+  item.textContent = texto;
+  document.getElementById("lista-logros").appendChild(item);
 }
-.hidden {
-  display: none;
+
+function actualizarPuntosUI(puntos) {
+  puntosEl.textContent = `⭐ Puntos: ${puntos}`;
 }
-button {
-  display: block;
-  margin: 10px 0;
-  padding: 10px 15px;
-  font-size: 1rem;
+
+// Restaurar progreso si existe
+let puntos = parseInt(localStorage.getItem("puntos")) || 0;
+const escenaGuardada = localStorage.getItem("escena");
+const personajeGuardado = localStorage.getItem("personaje");
+
+if (personajeGuardado && escenaGuardada) {
+  personaje = personajeGuardado;
+  document.getElementById("pantalla-inicio").classList.add("hidden");
+  document.getElementById("pantalla-historia").classList.remove("hidden");
+  document.getElementById("nombre-personaje").textContent = `👤 Personaje: ${personaje}`;
+  mostrarEscena(escenaGuardada);
+  actualizarPuntosUI(puntos);
+}
+
+function elegirPersonaje(nombre) {
+  personaje = nombre;
+  localStorage.setItem("personaje", personaje);
+  document.getElementById("pantalla-inicio").classList.add("hidden");
+  document.getElementById("pantalla-historia").classList.remove("hidden");
+  document.getElementById("nombre-personaje").textContent = `👤 Personaje: ${personaje}`;
+  puntos = 0;
+  localStorage.setItem("puntos", puntos);
+  actualizarPuntosUI(puntos);
+  mostrarEscena("inicio");
+}
+
+function mostrarEscena(escena) {
+  const nodo = historia[escena];
+  document.getElementById("texto-historia").textContent = nodo.texto;
+  const contenedorOpciones = document.getElementById("opciones");
+  contenedorOpciones.innerHTML = "";
+  localStorage.setItem("escena", escena);
+
+  nodo.opciones.forEach(op => {
+    const btn = document.createElement("button");
+    btn.textContent = op.texto;
+    btn.onclick = () => {
+      puntos += 10;
+      localStorage.setItem("puntos", puntos);
+      actualizarPuntosUI(puntos);
+      mostrarEscena(op.siguiente);
+    };
+    contenedorOpciones.appendChild(btn);
+  });
+
+  // Si es final, mostrar mensaje
+  if (nodo.opciones.length === 0) {
+    puntos += 50; // Logro por completar
+    localStorage.setItem("puntos", puntos);
+    actualizarPuntosUI(puntos);
+    agregarLogro("🏁 Aventura completada");
+  }
 }
