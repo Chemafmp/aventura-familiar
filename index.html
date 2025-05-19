@@ -1,42 +1,54 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aventura Familiar</title>
-  <link rel="stylesheet" href="css/styles.css" />
-</head>
-<body>
-  <div id="pantalla-inicio">
-    <h1>🌟 Aventura Familiar 🌟</h1>
-    <p>¡Elige tu personaje para empezar la historia!</p>
-    <button onclick="elegirPersonaje('Marina')">Marina</button>
-    <button onclick="elegirPersonaje('Josema')">Josema</button>
-    <button onclick="elegirPersonaje('Elfos')">Elfos</button>
-  </div>
+function mostrarEscena(escena) {
+  const nodo = historia[escena];
+  localStorage.setItem("escena", escena);
+  document.getElementById("texto-historia").textContent = nodo.texto;
+  const contenedorOpciones = document.getElementById("opciones");
+  contenedorOpciones.innerHTML = "";
 
-  <div id="pantalla-historia" class="hidden">
-    <h2 id="nombre-personaje"></h2>
-    <p id="texto-historia"></p>
-    <div id="opciones"></div>
+  nodo.opciones.forEach(op => {
+    const btn = document.createElement("button");
+    btn.textContent = op.texto;
+    btn.onclick = () => {
+      const pregunta = preguntas[Math.floor(Math.random() * preguntas.length)];
+      const modal = document.getElementById("modal-acertijo");
+      const input = document.getElementById("respuesta-acertijo");
+      const textoPregunta = document.getElementById("pregunta-acertijo");
+      const botonEnviar = document.getElementById("enviar-acertijo");
 
-    <div id="contador-puntos">Puntos: 0</div>
-    <button id="boton-reiniciar">🔄 Reiniciar Juego</button>
+      textoPregunta.textContent = pregunta.pregunta;
+      input.value = "";
+      modal.classList.remove("hidden");
 
-    <div id="seccion-logros">
-      <h3>🎖️ Logros</h3>
-      <ul id="lista-logros"></ul>
-    </div>
-  </div>
+      // Desactivar botones mientras el modal está abierto
+      const botones = contenedorOpciones.querySelectorAll("button");
+      botones.forEach(b => b.disabled = true);
 
-  <div id="modal-acertijo" class="hidden">
-    <div id="modal-contenido">
-      <p id="pregunta-acertijo"></p>
-      <input type="text" id="respuesta-acertijo" placeholder="Escribe tu respuesta..." />
-      <button id="enviar-acertijo">Responder</button>
-    </div>
-  </div>
+      botonEnviar.onclick = () => {
+        const respuesta = input.value.trim();
+        modal.classList.add("hidden");
 
-  <script src="js/main.js"></script>
-</body>
-</html>
+        // Reactivar botones
+        botones.forEach(b => b.disabled = false);
+
+        if (respuesta === pregunta.respuesta) {
+          puntos += 10;
+          localStorage.setItem("puntos", puntos);
+          actualizarPuntosUI();
+          agregarLogro("✅ Acertijo resuelto");
+          mostrarEscena(op.siguiente);
+        } else {
+          agregarLogro("❌ Acertijo fallado");
+          mostrarEscena("fallo");
+        }
+      };
+    };
+    contenedorOpciones.appendChild(btn);
+  });
+
+  if (nodo.opciones.length === 0) {
+    puntos += 50;
+    localStorage.setItem("puntos", puntos);
+    actualizarPuntosUI();
+    agregarLogro("🏁 Aventura completada");
+  }
+}
