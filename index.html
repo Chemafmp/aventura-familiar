@@ -1,54 +1,131 @@
-function mostrarEscena(escena) {
-  const nodo = historia[escena];
-  localStorage.setItem("escena", escena);
-  document.getElementById("texto-historia").textContent = nodo.texto;
-  const contenedorOpciones = document.getElementById("opciones");
-  contenedorOpciones.innerHTML = "";
+/* Fondo general y tipografía */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #2c3e50, #4ca1af);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  nodo.opciones.forEach(op => {
-    const btn = document.createElement("button");
-    btn.textContent = op.texto;
-    btn.onclick = () => {
-      const pregunta = preguntas[Math.floor(Math.random() * preguntas.length)];
-      const modal = document.getElementById("modal-acertijo");
-      const input = document.getElementById("respuesta-acertijo");
-      const textoPregunta = document.getElementById("pregunta-acertijo");
-      const botonEnviar = document.getElementById("enviar-acertijo");
+/* Secciones principales */
+#pantalla-inicio,
+#pantalla-historia {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
 
-      textoPregunta.textContent = pregunta.pregunta;
-      input.value = "";
-      modal.classList.remove("hidden");
+/* Títulos y textos */
+h1, h2, h3 {
+  margin-bottom: 20px;
+  color: #ffd700;
+}
 
-      // Desactivar botones mientras el modal está abierto
-      const botones = contenedorOpciones.querySelectorAll("button");
-      botones.forEach(b => b.disabled = true);
+p {
+  font-size: 1.2em;
+  line-height: 1.6;
+}
 
-      botonEnviar.onclick = () => {
-        const respuesta = input.value.trim();
-        modal.classList.add("hidden");
+/* Botones */
+button {
+  padding: 12px 24px;
+  margin: 10px 8px;
+  font-size: 1.1em;
+  border: none;
+  border-radius: 8px;
+  background-color: #2980b9;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
 
-        // Reactivar botones
-        botones.forEach(b => b.disabled = false);
+button:hover {
+  background-color: #3498db;
+  transform: scale(1.05);
+}
 
-        if (respuesta === pregunta.respuesta) {
-          puntos += 10;
-          localStorage.setItem("puntos", puntos);
-          actualizarPuntosUI();
-          agregarLogro("✅ Acertijo resuelto");
-          mostrarEscena(op.siguiente);
-        } else {
-          agregarLogro("❌ Acertijo fallado");
-          mostrarEscena("fallo");
-        }
-      };
-    };
-    contenedorOpciones.appendChild(btn);
-  });
+#boton-reiniciar {
+  background-color: #c0392b;
+}
 
-  if (nodo.opciones.length === 0) {
-    puntos += 50;
-    localStorage.setItem("puntos", puntos);
-    actualizarPuntosUI();
-    agregarLogro("🏁 Aventura completada");
-  }
+#boton-reiniciar:hover {
+  background-color: #e74c3c;
+}
+
+/* Contador de puntos y logros */
+#contador-puntos {
+  margin-top: 20px;
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #00ffcc;
+}
+
+#seccion-logros {
+  margin-top: 30px;
+  text-align: left;
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 15px;
+  border-radius: 10px;
+}
+
+#lista-logros {
+  list-style: none;
+  padding-left: 0;
+}
+
+#lista-logros li {
+  margin: 5px 0;
+  padding: 6px 12px;
+  background-color: #34495e;
+  border-radius: 6px;
+}
+
+/* Modal acertijo */
+#modal-acertijo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+#modal-acertijo.hidden {
+  display: none;
+}
+
+#modal-contenido {
+  background-color: #ffffff;
+  color: #000000;
+  padding: 30px 40px;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+#modal-contenido p {
+  font-size: 1.2em;
+}
+
+#modal-contenido input {
+  width: 80%;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
