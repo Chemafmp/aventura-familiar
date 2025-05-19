@@ -1,26 +1,63 @@
-<body>
-  <div id="pantalla-inicio">
-    <h1>🌟 Aventura Familiar 🌟</h1>
-    <p>¡Elige tu personaje para empezar la historia!</p>
-    <button onclick="elegirPersonaje('Marina')">Marina</button>
-    <button onclick="elegirPersonaje('Josema')">Josema</button>
-    <button onclick="elegirPersonaje('Elfos')">Elfos</button>
-  </div>
+const preguntas = [
+  { pregunta: "¿Cuánto es 4 + 5?", respuesta: "9" },
+  { pregunta: "¿Cuánto es 7 - 3?", respuesta: "4" },
+  { pregunta: "¿Cuántos días tiene una semana?", respuesta: "7" },
+  { pregunta: "¿Cuánto es 2 x 3?", respuesta: "6" },
+  { pregunta: "¿Cuántas patas tiene un perro?", respuesta: "4" }
+];
 
-  <div id="pantalla-historia" class="hidden">
-    <h2 id="nombre-personaje"></h2>
-    <p id="texto-historia"></p>
-    <div id="opciones"></div>
+function mostrarEscena(escena) {
+  const nodo = historia[escena];
+  localStorage.setItem("escena", escena);
+  document.getElementById("texto-historia").textContent = nodo.texto;
+  const contenedorOpciones = document.getElementById("opciones");
+  contenedorOpciones.innerHTML = "";
 
-    <div id="contador-puntos">Puntos: 0</div>
+  nodo.opciones.forEach(op => {
+    const btn = document.createElement("button");
+    btn.textContent = op.texto;
+    btn.onclick = () => {
+      const pregunta = preguntas[Math.floor(Math.random() * preguntas.length)];
+      const modal = document.getElementById("modal-acertijo");
+      const input = document.getElementById("respuesta-acertijo");
+      const textoPregunta = document.getElementById("pregunta-acertijo");
+      const botonEnviar = document.getElementById("enviar-acertijo");
 
-    <button id="boton-reiniciar">🔄 Reiniciar Juego</button>
+      textoPregunta.textContent = pregunta.pregunta;
+      input.value = "";
+      modal.classList.remove("hidden");
 
-    <div id="seccion-logros">
-      <h3>🎖️ Logros</h3>
-      <ul id="lista-logros"></ul>
-    </div>
-  </div>
+      botonEnviar.onclick = () => {
+        const respuesta = input.value.trim();
+        modal.classList.add("hidden");
 
-  <script src="js/main.js"></script>
-</body>
+        if (respuesta === pregunta.respuesta) {
+          puntos += 10;
+          localStorage.setItem("puntos", puntos);
+          actualizarPuntosUI();
+          agregarLogro("✅ Acertijo resuelto");
+          mostrarEscena(op.siguiente);
+        } else {
+          agregarLogro("❌ Acertijo fallado");
+          mostrarEscena("fallo");
+        }
+      };
+    };
+    contenedorOpciones.appendChild(btn);
+  });
+
+  if (nodo.opciones.length === 0) {
+    puntos += 50;
+    localStorage.setItem("puntos", puntos);
+    actualizarPuntosUI();
+    agregarLogro("🏁 Aventura completada");
+  }
+}
+
+// Asegúrate que en el objeto historia exista la escena "fallo" como esta:
+// fallo: {
+//   texto: "¡Oh no! Fallaste el acertijo. Prueba otro camino.",
+//   opciones: [
+//     { texto: "Volver a la habitación", siguiente: "inicio" }
+//   ]
+// }
